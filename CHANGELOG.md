@@ -12,8 +12,11 @@ Shorter solutions, and the demo assets.
   failure the deterministic solver hit is gone. Solve time rises to ~320 ms,
   paid while the cube is holding still.
 - Single-cell tools are now tried shortest-first (4 moves before 6).
-- `docs/demo.mp4` and `docs/demo.gif`: 22 s, rendered offline frame by frame —
-  solved cube, A·L·I·C·E, and an orbit through the other faces.
+- `docs/demo.mp4` (36 s) and `docs/demo.gif` (first 20 s): two cubes side by
+  side turning through `ALICEILEAF` and `WILLIAM`, with an orbit in the middle
+  where both stop and the camera swings round the other faces. Rendered
+  offline frame by frame — a background browser tab never paints, so screen
+  capture only yields stutter.
 - `docs/alphabet.png` with `docs/alphabet.html` that generates it, reading the
   glyph table out of `cube-type.js` so it cannot drift from the shipped font.
 - README: the new numbers, both demo assets, and an explicit note that this is
