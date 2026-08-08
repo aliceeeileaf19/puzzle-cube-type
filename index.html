@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>puzzle-cube-type — a 7×7 puzzle cube that turns itself into letters</title>
+<meta name="description" content="A 7x7 puzzle cube whose sticker colours never change. Every letter is reached by legal layer turns only.">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="cube-type.css">
+<style>
+  /* Demo page only — not part of the component. */
+  html,body{ height:100%; }
+  body.cube-standalone{
+    margin:0; background:#000; color:#f4f4f4;
+    display:flex; align-items:center; justify-content:center;
+    -webkit-font-smoothing:antialiased;
+  }
+  .cube-standalone__hint{
+    position:fixed; bottom:14px; left:0; right:0; text-align:center;
+    font:10px/1.9 "Helvetica Neue",Helvetica,Arial,sans-serif;
+    letter-spacing:.2em; color:rgba(255,255,255,.2); user-select:none;
+    padding:0 16px;
+  }
+  .cube-standalone__hint b{ color:rgba(255,255,255,.5); font-weight:400; }
+  .cube-standalone__hint a{ color:rgba(255,255,255,.35); }
+</style>
+</head>
+<body class="cube-standalone">
+
+  <div class="cube-type">
+    <div class="cube-type__block" data-word="ALICEILEAF"></div>
+    <div class="cube-type__block" data-word="WILLIAM"></div>
+  </div>
+
+  <div class="cube-standalone__hint">
+    <b>Drag</b> to orbit · <b>Click</b> for the next letter · <b>Space</b> to pause · <b>R</b> to reset<br>
+    Sticker colours never change — every letter is reached by legal layer turns only.
+    <a href="https://github.com/aliceeeileaf19/puzzle-cube-type">source</a>
+  </div>
+
+<script src="cube-type.js"></script>
+</body>
+</html>

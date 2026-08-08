@@ -1,0 +1,109 @@
+/* puzzle-cube-type — a 7x7 puzzle cube that turns itself into letters.
+   https://github.com/aliceeeileaf19/puzzle-cube-type
+   MIT License. Copyright (c) 2026 Alice I Leaf
+
+   Everything lives under the .cube-type namespace so it will not collide
+   with generic class names (.block / .grid / .cell) in a host page. */
+
+.cube-type{
+  --ct-s: clamp(14px, 3.3vh, 30px);      /* one pixel; cube edge = 7x this */
+  --ct-gap: calc(var(--ct-s) * 2);       /* between cubes */
+  --ct-edge: rgba(255,255,255,.13);      /* seam around a dark sticker */
+  --ct-edge-lit: rgba(0,0,0,.34);        /* seam around a light sticker */
+
+  display:flex; flex-direction:column; align-items:center;
+  gap: var(--ct-gap);
+  /* Perspective makes a turning cube spill outside its 7x7 box, so it needs
+     room on all sides or the host container will clip it. */
+  padding: calc(var(--ct-s) * 1.8) calc(var(--ct-s) * 1.6);
+  font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+
+.cube-type__block{
+  display:flex; flex-direction:column; align-items:center;
+  /* Generous, for the same spill reason — otherwise the projected cube
+     overlaps the label underneath it. */
+  gap: calc(var(--ct-s) * 2.4);
+}
+
+.cube-type__scene{
+  width: calc(var(--ct-s) * 7);
+  height: calc(var(--ct-s) * 7);
+  perspective: calc(var(--ct-s) * 34);
+  cursor: grab;
+  touch-action: manipulation;   /* touch = tap only; never steal page scroll */
+}
+.cube-type__scene--dragging{ cursor: grabbing; }
+
+/* Whole-cube orientation, driven by pointer drag. Deliberately NOT a
+   continuously running animation: a 7x7 is ~500 elements per cube and
+   repainting all of them every frame drops frames. Only the layer that is
+   mid-turn actually animates. */
+.cube-type__cube{
+  position:relative;
+  width:100%; height:100%;
+  transform-style: preserve-3d;
+}
+
+/* The layer being turned is moved into this group for the duration of the
+   turn, then moved back. Default transform-origin is the cube's centre,
+   which is exactly the axis a real layer turn rotates about. */
+.cube-type__turn{
+  position:absolute; inset:0;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.cube-type__cubelet{
+  position:absolute;
+  left:50%; top:50%;
+  width:var(--ct-s); height:var(--ct-s);
+  margin-left: calc(var(--ct-s) / -2);
+  margin-top:  calc(var(--ct-s) / -2);
+  transform-style: preserve-3d;
+}
+
+/* One sticker = one pixel. Its colour is decided once at build time and
+   never changes again; letters are formed purely by moving stickers. */
+.cube-type__px{
+  position:absolute; inset:0;
+  box-sizing:border-box;
+  border:1px solid var(--ct-edge);
+  backface-visibility: hidden;
+}
+
+/* Shading follows where a sticker currently points in world space, with a
+   fixed light above and in front. Recomputed after every turn, so the
+   shading stays correct while you drag the cube around. */
+.cube-type__px--up   { background:#151515; }
+.cube-type__px--fb   { background:#000;    }   /* front / back */
+.cube-type__px--side { background:#0a0a0a; }   /* left / right */
+.cube-type__px--down { background:#050505; }
+
+.cube-type__px--lit{ border-color:var(--ct-edge-lit); }
+.cube-type__px--lit.cube-type__px--up   { background:#ffffff; }
+.cube-type__px--lit.cube-type__px--fb   { background:#f4f4f4; }
+.cube-type__px--lit.cube-type__px--side { background:#cfcfcf; }
+.cube-type__px--lit.cube-type__px--down { background:#a8a8a8; }
+
+.cube-type__label{
+  font-size:11px; letter-spacing:.34em; text-transform:uppercase;
+  color:rgba(255,255,255,.28); user-select:none; white-space:nowrap;
+}
+.cube-type__label b{ color:rgba(255,255,255,.92); font-weight:500; }
+.cube-type__label i{ font-style:normal; letter-spacing:.16em; color:rgba(255,255,255,.22); }
+
+/* Label and reset sit in their own tight group so the block's large gap
+   does not push them apart. */
+.cube-type__meta{
+  display:flex; flex-direction:column; align-items:center; gap:9px;
+}
+.cube-type__reset{
+  appearance:none; -webkit-appearance:none;
+  background:none; border:0; padding:2px 6px;
+  font:10px/1 "Helvetica Neue",Helvetica,Arial,sans-serif;
+  letter-spacing:.3em; text-transform:uppercase;
+  color:rgba(255,255,255,.2); cursor:pointer;
+}
+.cube-type__reset:hover,
+.cube-type__reset:focus-visible{ color:rgba(255,255,255,.62); outline:none; }
