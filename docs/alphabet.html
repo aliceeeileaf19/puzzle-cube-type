@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>puzzle-cube-type — 7×7 alphabet specimen</title>
+<!-- Generator for docs/alphabet.png. Reads the glyph table straight out of
+     cube-type.js so this sheet can never drift from the shipped font.
+     Render with:
+       chrome --headless=new --window-size=1120,780 --force-device-scale-factor=2 \
+              --screenshot=docs/alphabet.png http://localhost:PORT/docs/alphabet.html
+-->
+<link rel="stylesheet" href="../cube-type.css">
+<style>
+  :root{
+    --cell: 15px;
+    --lit: #f4f4f4;
+    --dark: #0b0b0b;
+    --seam-dark: rgba(255,255,255,.13);
+    --seam-lit: rgba(0,0,0,.34);
+  }
+  html,body{ margin:0; background:#000; color:#f4f4f4;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; }
+  main{ padding:34px 40px 30px; }
+  h1{ margin:0 0 4px; font-size:13px; font-weight:500; letter-spacing:.3em;
+      text-transform:uppercase; color:rgba(255,255,255,.85); }
+  p.sub{ margin:0 0 26px; font-size:11px; letter-spacing:.12em;
+      color:rgba(255,255,255,.34); }
+  #sheet{ display:grid; grid-template-columns:repeat(7,max-content); gap:22px 26px; }
+  .g{ display:flex; flex-direction:column; align-items:center; gap:7px; }
+  .grid{ display:grid; grid-template-columns:repeat(7,var(--cell));
+         grid-template-rows:repeat(7,var(--cell)); }
+  .px{ width:var(--cell); height:var(--cell); box-sizing:border-box;
+       background:var(--dark); border:1px solid var(--seam-dark); }
+  .px.on{ background:var(--lit); border-color:var(--seam-lit); }
+  .cap{ font-size:10px; letter-spacing:.26em; color:rgba(255,255,255,.42); }
+  .cap b{ color:rgba(255,255,255,.9); font-weight:500; }
+  footer{ margin-top:28px; font-size:10px; letter-spacing:.14em;
+          color:rgba(255,255,255,.26); }
+</style>
+</head>
+<body>
+<main>
+  <h1>7 × 7 pixel alphabet</h1>
+  <p class="sub">Every glyph is reachable on one face of a 7×7 puzzle cube using legal layer turns only.</p>
+  <div id="sheet"></div>
+  <footer>puzzle-cube-type · light cells count shown per glyph · MIT</footer>
+</main>
+<script src="../cube-type.js"></script>
+<script>
+  addEventListener('load', () => {
+    const G = window.CubeType.GLYPHS;
+    const sheet = document.getElementById('sheet');
+    for (const ch of Object.keys(G)) {
+      const rows = G[ch];
+      const wrap = document.createElement('div'); wrap.className = 'g';
+      const grid = document.createElement('div'); grid.className = 'grid';
+      let on = 0;
+      for (const row of rows) for (const c of row) {
+        const d = document.createElement('div');
+        d.className = 'px' + (c === '#' ? ' on' : '');
+        if (c === '#') on++;
+        grid.appendChild(d);
+      }
+      const cap = document.createElement('div'); cap.className = 'cap';
+      cap.innerHTML = `<b>${ch}</b> ${on}`;
+      wrap.append(grid, cap);
+      sheet.appendChild(wrap);
+    }
+    document.title = 'ready';
+  });
+</script>
+</body>
+</html>

@@ -4,6 +4,13 @@ A 7×7 puzzle cube that turns itself into letters.
 
 **[Live demo →](https://aliceeeileaf19.github.io/puzzle-cube-type/)**
 
+![A 7x7 puzzle cube turning itself into the letters of ALICE, then orbited to show the other faces](docs/demo.gif)
+
+*Solved cube, then A · L · I · C · E, each reached by legal layer turns. The
+orbit in the middle is the whole point: the other faces are nothing but
+scattered light and dark stickers. Nothing hidden, nothing repainted.
+([sharper MP4](docs/demo.mp4))*
+
 The sticker colours are decided once and **never change**. Every letter on the
 front face is reached by legal layer turns only — the same turns you could make
 with your hands on a physical cube. Drag it around and you will find no trick
@@ -121,12 +128,44 @@ solidity.
    monochrome, apply a turn that provably cannot touch the front face (any `z`
    layer except `z = 3`) and try again.
 
-Cost: **4–12 ms** per letter. Length: **28 moves** on average for `ALICEILEAF`,
-**17** for `WILLIAM`, **31** across the whole alphabet.
-
 A repeated letter solves in **0 moves**, because a real cube genuinely does not
 need to move. Short solves are padded with front-preserving turns and re-solved,
 so the cube is visibly working without disturbing the glyph.
+
+### Making the solution shorter
+
+Greedy descent on its own is deterministic, so simply re-running it explores
+nothing. Three changes together take about a quarter off the move count:
+
+1. **Randomised tie-breaks.** Among equally good moves, pick at random — now
+   restarts actually diverge.
+2. **Plateau moves.** Allow up to three distance-neutral moves to climb out of a
+   local minimum instead of dropping straight into per-cell repair.
+3. **Cancellation.** Turns about the same axis commute whatever layers they act
+   on, so within any run of consecutive same-axis moves the order is free.
+   Group the run by layer and reduce each layer's quarter turns mod 4: 0
+   vanishes, 1 or 3 collapses to one move. Provably sound, and verified against
+   the target anyway.
+
+Keeping the shortest of ten such attempts:
+
+| over 78 (state, letter) pairs | before | after   |
+| ----------------------------- | -----: | ------: |
+| mean moves                    |     37 |  **28** |
+| median                        |     41 |  **28** |
+| worst                         |     77 |  **57** |
+| failures                      |      1 |   **0** |
+| slowest solve                 |  33 ms | 322 ms  |
+
+Restarts also bought robustness: the single failure the deterministic solver hit
+disappeared. The cost is solve time — 10 attempts instead of 1 — which is paid
+while the cube is sitting still between letters.
+
+**This is the shortest sequence found, not a proven minimum.** Proving
+minimality on a 7×7 is out of reach: the state space is astronomical and this is
+pattern reachability, not solving. A weak lower bound — each move rewrites at
+most 7 of the 49 cells, so at least ⌈distance/7⌉ moves are needed — sits around
+4, so there is a lot of headroom left. Closing that gap is open.
 
 ---
 
@@ -134,25 +173,35 @@ so the cube is visibly working without disturbing the glyph.
 
 Everything below is reproducible from `window.CubeType` in the demo.
 
-| check                                                             | result                     |
-| ----------------------------------------------------------------- | -------------------------- |
-| All 26 letters solved, front face equal cell for cell             | 26 / 26                    |
-| 282 arbitrary 49-bit targets (all-light, all-dark, density 5–95 %) | 0 failures                 |
-| Move count over those targets                                     | median 40, min 4, max 85   |
-| 140 animated transitions, model vs. target                        | 0 mismatches               |
-| DOM transforms vs. internal model                                 | Hamming distance 0         |
-| Light-sticker count, at all times                                 | 147, invariant             |
+| check                                                          | result                    |
+| -------------------------------------------------------------- | ------------------------- |
+| 26 letters from 3 different states, front face equal cell for cell | 78 / 78, 0 failures   |
+| 102 arbitrary 49-bit targets, density 0.2–0.8                   | 0 failures                |
+| Move count over those targets                                   | mean 39.5, median 40, max 50 |
+| Degenerate targets (all-light, all-dark) from 3 states          | 0 failures                |
+| 140 animated transitions, model vs. target                     | 0 mismatches              |
+| DOM transforms vs. internal model                              | Hamming distance 0        |
+| Light-sticker count, at all times                              | 147, invariant            |
 
 So: with three light faces and three dark, **any 7×7 black-and-white bitmap
 appears to be reachable on one face using legal turns alone.** The per-orbit
-counting above shows why there is no shortage of either colour; the 282 cases
+counting above shows why there is no shortage of either colour; the cases above
 are empirical evidence rather than a proof of reachability.
+
 
 The component also self-checks at runtime. After every letter it compares the
 front face against the target and `console.warn`s if a single cell is off. It
 has never fired.
 
 ---
+
+---
+
+## The alphabet
+![All 26 glyphs of the 7x7 pixel alphabet, each drawn as a grid of light and dark cells](docs/alphabet.png)
+
+Regenerate with `docs/alphabet.html`, which reads the glyph table straight out of
+`cube-type.js` so the sheet cannot drift from the shipped font.
 
 ## Usage
 
@@ -208,6 +257,13 @@ it.
 - **No physical-cube notation yet.** The solver emits `(axis, layer, direction)`
   triples. Mapping those to standard big-cube notation (`3R'`, `2U2`) so a human
   could follow along on a real 7×7 is the obvious next step and is not done.
+- **Solving blocks the main thread for up to ~320 ms**, since it runs ten
+  attempts and keeps the shortest. That lands while the cube is holding still
+  between letters, but it will stutter a drag in progress. Lower `RESTARTS` to
+  trade move count for responsiveness.
+- **Letters only, A–Z.** No digits or punctuation yet.
+- **Colours are not themeable yet** beyond the seam variables; the light/dark
+  values live in CSS rules rather than custom properties.
 - Background browser tabs throttle timers, so an off-screen demo appears to
   crawl. That is the browser, not the solver.
 
