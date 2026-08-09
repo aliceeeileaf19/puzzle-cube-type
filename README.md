@@ -199,11 +199,26 @@ has never fired.
 
 ---
 
-## The alphabet
-![All 26 glyphs of the 7x7 pixel alphabet, each drawn as a grid of light and dark cells](docs/alphabet.png)
+## The glyphs
 
-Regenerate with `docs/alphabet.html`, which reads the glyph table straight out of
-`cube-type.js` so the sheet cannot drift from the shipped font.
+![All 50 glyphs of the 7x7 pixel set, each drawn as a grid of light and dark cells](docs/alphabet.png)
+
+50 glyphs: 26 letters, 10 digits, 14 punctuation marks. Regenerate the sheet with
+`docs/alphabet.html`, which reads the glyph table straight out of `cube-type.js`
+so it cannot drift from the shipped font.
+
+Seven cells is not much, so several characters needed deliberate distinguishing:
+`0` is slashed and `1` is serifed so neither collapses into `O` or `I`, `8` is
+drawn narrow so it does not read as `B`, and `3` has no left stem at all so it
+does not read as `S`. Measured across all 1225 pairs, the closest new pair is
+`.` / `,` at 3 differing cells out of 49 — the same distance as `C` / `O` and
+`P` / `R`, which were already in the alphabet.
+
+Three characters were designed and then dropped rather than shipped
+half-legible: **space** (an all-dark face reads as a fault, not a gap — write
+words unspaced or split them across cubes), **`&`** (it came out looking like a
+filled `8`, which is also in the set) and **`@`** (a ring plus an inner glyph is
+two nested features at one cell each, and the sticker seams swallow them).
 
 ## Usage
 
@@ -218,8 +233,8 @@ Regenerate with `docs/alphabet.html`, which reads the glyph table straight out o
 ```
 
 Every `.cube-type__block` inside a `.cube-type` host becomes its own cube and
-cycles through its `data-word`. Only `A`–`Z` are defined; other characters are
-ignored.
+cycles through its `data-word`. `A`–`Z`, `0`–`9` and
+`! " # ' ( ) + , - . / : = ?` are defined; anything else is ignored.
 
 | attribute            | on            | effect                        |
 | -------------------- | ------------- | ----------------------------- |
@@ -268,7 +283,6 @@ it.
   attempts and keeps the shortest. That lands while the cube is holding still
   between letters, but it will stutter a drag in progress. Lower `RESTARTS` to
   trade move count for responsiveness.
-- **Letters only, A–Z.** No digits or punctuation yet.
 - **Colours are not themeable yet** beyond the seam variables; the light/dark
   values live in CSS rules rather than custom properties.
 - Background browser tabs throttle timers, so an off-screen demo appears to

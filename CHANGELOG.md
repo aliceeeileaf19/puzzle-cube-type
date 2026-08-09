@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.3.0 — 2026-08-09
+
+Digits and punctuation.
+
+- 24 new glyphs: `0`–`9` and `! " # ' ( ) + , - . / : = ?`, taking the set to 50.
+  All 50 verified solvable from three different cube states — 150 combinations,
+  0 failures, 30.4 moves on average.
+- Several needed deliberate distinguishing at 7×7: `0` slashed and `1` serifed so
+  they do not collapse into `O` and `I`, `8` narrow so it does not read as `B`,
+  `3` with no left stem so it does not read as `S`. Checked by measuring all 1225
+  glyph pairs rather than by eye; the closest new pair (`.` / `,`, 3 cells of 49)
+  matches the closest pair the alphabet already had (`C` / `O`, `P` / `R`).
+- Space, `&` and `@` were designed and then dropped rather than shipped
+  half-legible. Reasons are in the README.
+- `data-restarts` on the host trades move count for a shorter main-thread block:
+  four restarts costs 21.3 moves on average with a 90 ms worst case, ten costs
+  20.7 with 251 ms.
+- `setPointerCapture` no longer throws out of `pointerdown` for synthetic pointer
+  events, which was skipping the `preventDefault` after it.
+
 ## 0.2.0 — 2026-08-08
 
 Shorter solutions, and the demo assets.
