@@ -585,7 +585,10 @@
     b.scene.addEventListener('pointerdown', e => {
       if (e.pointerType === 'touch') return;
       drag = { id:e.pointerId, x:e.clientX, y:e.clientY, rx:b.rx, ry:b.ry, moved:0 };
-      b.scene.setPointerCapture(e.pointerId);
+      /* Throws for a synthetic PointerEvent, which has no active pointer — and
+         a throw here would skip the preventDefault below. Capture is a nicety
+         (it keeps the drag alive outside the element), so losing it is fine. */
+      try { b.scene.setPointerCapture(e.pointerId); } catch (_) {}
       b.scene.classList.add('cube-type__scene--dragging');
       e.preventDefault();
     });
