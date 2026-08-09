@@ -4,14 +4,14 @@ A 7×7 puzzle cube that turns itself into letters.
 
 **[Live demo →](https://aliceeeileaf19.github.io/puzzle-cube-type/)**
 
-![Two 7x7 puzzle cubes side by side spelling ALICEILEAF and WILLIAM letter by letter, then orbited to show their other faces](docs/demo.gif)
+![The demo page: two 7x7 puzzle cubes spelling ALICEILEAF and WILLIAM letter by letter, then orbited to show their other faces](docs/demo.gif)
 
 *Two cubes, each turning itself through its own word — `ALICEILEAF` and
 `WILLIAM`. Every letter is reached by legal layer turns; the count under each
 cube tracks how far through the word it has got. The orbit in the middle is the
 whole point: both cubes stop, the camera swings round, and the other faces turn
 out to be nothing but scattered light and dark stickers. Nothing hidden, nothing
-repainted. ([full 36 s MP4](docs/demo.mp4) — the GIF is the first 20 s)*
+repainted. ([full 36 s MP4](docs/demo.mp4) — the GIF is the first 17 s)*
 
 The sticker colours are decided once and **never change**. Every letter on the
 front face is reached by legal layer turns only — the same turns you could make
