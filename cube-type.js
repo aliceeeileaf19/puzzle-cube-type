@@ -1,5 +1,5 @@
 /*!
- * puzzle-cube-type 0.3.0 — a 7x7 puzzle cube that turns itself into letters.
+ * puzzle-cube-type 0.4.0 — a 7x7 puzzle cube that turns itself into letters.
  * https://github.com/aliceeeileaf19/puzzle-cube-type
  * MIT License. Copyright (c) 2026 Alice I Leaf
  *
@@ -29,7 +29,7 @@
 (() => {
   'use strict';
 
-  const VERSION = '0.3.0';
+  const VERSION = '0.4.0';
 
   const N = 7;              /* cube order. 5 or 9 also work; supply matching GLYPHS. */
   const R = (N - 1) / 2;    /* coordinates run -R..R */

@@ -1,5 +1,25 @@
 # Changelog
 
+## 0.4.0 — 2026-08-09
+
+Themeable colours.
+
+- Every colour now comes from a custom property. A theme is two values —
+  `--ct-off` for the unlit sticker and `--ct-on` for the lit one — plus
+  `--ct-ink` for the label. The eight face colours are derived from those with
+  `color-mix()` so a two-value theme still gets a cube with volume.
+- Variables renamed from `--ct-dark`/`--ct-light` to `--ct-off`/`--ct-on`. The old
+  pair was a contradiction for light themes, where the "light" sticker holds a
+  dark ink colour.
+- The default theme is unchanged on 7 of 8 faces, byte for byte. The eighth, the
+  lit top face, moves from `#ffffff` to `#f7f7f7`: the old value was not a
+  proportional lift of `#f4f4f4`, it was simply white, and keeping it literal
+  would wash the top face out of any coloured theme.
+- `docs/themes.png` and the `docs/themes.html` that generates it: default, paper,
+  amber and the palette this component is embedded in.
+- A light `--ct-off` also needs the four `--ct-off-*` ramp values, since a pale
+  colour cannot be lifted further. Documented with a copy-paste block.
+
 ## 0.3.0 — 2026-08-09
 
 Digits and punctuation.

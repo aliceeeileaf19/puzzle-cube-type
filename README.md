@@ -220,6 +220,51 @@ words unspaced or split them across cubes), **`&`** (it came out looking like a
 filled `8`, which is also in the set) and **`@`** (a ring plus an inner glyph is
 two nested features at one cell each, and the sticker seams swallow them).
 
+---
+
+## Theming
+
+![Four themes of the same cube: default black and white, dark ink on paper, amber on brown, and the author's portfolio palette](docs/themes.png)
+
+A cube shows a **two-tone** bitmap, so a theme is two sticker colours and nothing
+more. `--ct-off` is the unlit sticker — the background the glyph sits on — and
+`--ct-on` is the lit one, its ink. Those names hold whether the theme is dark or
+light. Eight face colours are derived from the two so a two-value theme still
+gets a cube with volume rather than a flat silhouette:
+
+```css
+.cube-type{ --ct-off:#1a1205; --ct-on:#ffb000; --ct-ink:#ffb000 }
+```
+
+`--ct-ink` colours the label and reset button; set it to whatever the surrounding
+text is.
+
+A **light** `--ct-off` needs four more values. The default ramp lifts every off
+face toward white, which is what a near-black colour needs to read as solid, but
+a pale colour cannot be lifted further — the faces turned away from the light
+have to go darker instead:
+
+```css
+.cube-type{
+  --ct-off:#e7e6dd; --ct-on:#14130f; --ct-ink:#14130f;
+  --ct-off-up:   color-mix(in srgb, var(--ct-off) 88%, white);
+  --ct-off-side: color-mix(in srgb, var(--ct-off) 92%, black);
+  --ct-off-down: color-mix(in srgb, var(--ct-off) 82%, black);
+  --ct-edge:     color-mix(in srgb, var(--ct-ink) 20%, transparent);
+}
+```
+
+Every one of `--ct-off-up|fb|side|down` and `--ct-on-up|fb|side|down` can also be
+set to a flat colour if you want to art-direct a single face. `--ct-edge` and
+`--ct-edge-lit` are the sticker seams.
+
+`docs/themes.html` is a live page for trying palettes and the generator for the
+image above.
+
+**What a theme cannot be**: a classic six-colour puzzle livery. A face has to
+show a glyph, and a glyph is one colour on another — six hues cannot express
+"lit" and "unlit". Six colours and a readable letter are mutually exclusive.
+
 ## Usage
 
 ```html
@@ -283,8 +328,6 @@ it.
   attempts and keeps the shortest. That lands while the cube is holding still
   between letters, but it will stutter a drag in progress. Lower `RESTARTS` to
   trade move count for responsiveness.
-- **Colours are not themeable yet** beyond the seam variables; the light/dark
-  values live in CSS rules rather than custom properties.
 - Background browser tabs throttle timers, so an off-screen demo appears to
   crawl. That is the browser, not the solver.
 

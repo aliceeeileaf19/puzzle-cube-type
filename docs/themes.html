@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<title>puzzle-cube-type — themes</title>
+<!-- Generator for docs/themes.png, and a live page for trying palettes.
+     Render with:
+       chrome --headless=new --window-size=1180,720 --force-device-scale-factor=2 \
+              --screenshot=docs/themes.png http://localhost:PORT/docs/themes.html
+-->
+<link rel="stylesheet" href="../cube-type.css">
+<style>
+  html,body{ margin:0; min-height:100%;
+    font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+    -webkit-font-smoothing:antialiased; background:#191917; color:#f4f4f4; }
+  main{ padding:30px 34px 26px; }
+  h1{ margin:0 0 4px; font-size:13px; font-weight:500; letter-spacing:.3em;
+      text-transform:uppercase; }
+  p.sub{ margin:0 0 26px; font-size:11px; letter-spacing:.1em;
+      color:rgba(255,255,255,.4); max-width:74ch; line-height:1.7 }
+  .row{ display:grid; grid-template-columns:repeat(4,minmax(0,1fr)); gap:0; }
+  /* Dividers, because two of the four panels are almost the same colour as the
+   page and would otherwise have no visible edge. */
+  .cell{ padding:26px 22px 22px; }
+  .cell + .cell{ box-shadow:-1px 0 0 rgba(160,160,150,.28); }
+  .cell h2{ margin:0 0 3px; font-size:10px; font-weight:500; letter-spacing:.22em;
+      text-transform:uppercase; }
+  .cell code{ display:block; margin:0 0 18px; font:9px/1.75 ui-monospace,Menlo,monospace;
+      opacity:.55; white-space:pre; }
+  .cube-type{ --ct-s:22px; padding:0; gap:0; align-items:flex-start }
+
+  /* 1 — default. Nothing set; the stylesheet's own values apply. */
+  .t-default{ background:#000; color:#f4f4f4 }
+
+  /* 2 — paper. A light 'off' needs the ramp inverted: faces turned away from the
+     light have to go darker, and there is no room to lift a pale colour. */
+  .t-paper{ background:#e7e6dd; color:#14130f }
+  .t-paper .cube-type{
+    --ct-off:#e7e6dd; --ct-on:#14130f; --ct-ink:#14130f;
+    --ct-off-up:   color-mix(in srgb, var(--ct-off) 88%, white);
+    --ct-off-side: color-mix(in srgb, var(--ct-off) 92%, black);
+    --ct-off-down: color-mix(in srgb, var(--ct-off) 82%, black);
+    --ct-edge:     color-mix(in srgb, var(--ct-ink) 20%, transparent);
+  }
+
+  /* 3 — amber terminal. Two values only; the derived ramp keeps the hue. */
+  .t-amber{ background:#120c02; color:#ffb000 }
+  .t-amber .cube-type{ --ct-off:#1a1205; --ct-on:#ffb000; --ct-ink:#ffb000 }
+
+  /* 4 — the palette this component is embedded in on the author's portfolio. */
+  .t-lab{ background:#080807; color:#f1eee5 }
+  .t-lab .cube-type{ --ct-off:#080807; --ct-on:#f1eee5; --ct-ink:#f1eee5 }
+</style>
+</head>
+<body>
+<main>
+  <h1>Themes</h1>
+  <p class="sub">A cube shows a two-tone bitmap, so a theme is two sticker colours: <code style="display:inline">--ct-off</code> for the unlit sticker and <code style="display:inline">--ct-on</code> for the lit one. Eight face colours are derived from them. A light <code style="display:inline">--ct-off</code> also needs the four <code style="display:inline">--ct-off-*</code> ramp values, because a pale colour cannot be lifted further — the paper theme shows the override.</p>
+</main>
+<div class="row">
+  <div class="cell t-default">
+    <h2>Default</h2>
+    <code>/* nothing set */</code>
+    <div class="cube-type" data-reset="off" data-restarts="4"><div class="cube-type__block" data-word="ALICE"></div></div>
+  </div>
+  <div class="cell t-paper">
+    <h2>Paper</h2>
+    <code>--ct-off:#e7e6dd
+--ct-on:#14130f
++ 4 ramp values</code>
+    <div class="cube-type" data-reset="off" data-restarts="4"><div class="cube-type__block" data-word="LEAF"></div></div>
+  </div>
+  <div class="cell t-amber">
+    <h2>Amber</h2>
+    <code>--ct-off:#1a1205
+--ct-on:#ffb000
+--ct-ink:#ffb000</code>
+    <div class="cube-type" data-reset="off" data-restarts="4"><div class="cube-type__block" data-word="CUBE"></div></div>
+  </div>
+  <div class="cell t-lab">
+    <h2>Lab</h2>
+    <code>--ct-off:#080807
+--ct-on:#f1eee5
+--ct-ink:#f1eee5</code>
+    <div class="cube-type" data-reset="off" data-restarts="4"><div class="cube-type__block" data-word="TYPE"></div></div>
+  </div>
+</div>
+<script src="../cube-type.js"></script>
+</body>
+</html>

@@ -8,8 +8,40 @@
 .cube-type{
   --ct-s: clamp(14px, 3.3vh, 30px);      /* one pixel; cube edge = 7x this */
   --ct-gap: calc(var(--ct-s) * 2);       /* between cubes */
-  --ct-edge: rgba(255,255,255,.13);      /* seam around a dark sticker */
-  --ct-edge-lit: rgba(0,0,0,.34);        /* seam around a light sticker */
+
+  /* ── Theme ────────────────────────────────────────────────────────────
+     A cube shows a two-tone bitmap, so a theme is two sticker colours and
+     nothing more — six-colour puzzle liveries cannot express a glyph. 'off' is
+     the unlit sticker (the background of the glyph), 'on' is the lit one (its
+     ink), which stays true whether the theme is dark or light:
+
+       .cube-type{ --ct-off:#1a1205; --ct-on:#ffb000; --ct-ink:#ffb000 }
+
+     The eight face colours are derived from those two so a two-value theme still
+     gets a cube with volume rather than a flat silhouette. The ramp lifts every
+     off face toward white, which is what a near-black 'off' needs to read as
+     solid; a light 'off' wants the opposite, so override the four --ct-off-*
+     values too — see the paper theme in the README. */
+  --ct-off:  #000;
+  --ct-on: #f4f4f4;
+  --ct-ink:   #fff;                      /* labels, reset button */
+
+  /* Shading by orientation, with a fixed light above and in front. 'fb' is left
+     at the base colour so the front face — the one carrying the glyph — is
+     exactly --ct-off, which lets it sit flush on a page of the same colour. */
+  --ct-off-up:    color-mix(in srgb, var(--ct-off) 91.8%, white);
+  --ct-off-fb:    var(--ct-off);
+  --ct-off-side:  color-mix(in srgb, var(--ct-off) 96%, white);
+  --ct-off-down:  color-mix(in srgb, var(--ct-off) 98%, white);
+  --ct-on-up:   color-mix(in srgb, var(--ct-on) 70%, white);
+  --ct-on-fb:   var(--ct-on);
+  --ct-on-side: color-mix(in srgb, var(--ct-on) 85%, black);
+  --ct-on-down: color-mix(in srgb, var(--ct-on) 69%, black);
+
+  /* Sticker seams. The dark seam is a lift so it reads on a dark sticker; the
+     light seam is a push so it reads on a light one. */
+  --ct-edge:     color-mix(in srgb, var(--ct-ink) 13%, transparent);
+  --ct-edge-lit: color-mix(in srgb, var(--ct-on) 66%, black);
 
   display:flex; flex-direction:column; align-items:center;
   gap: var(--ct-gap);
@@ -72,26 +104,27 @@
   backface-visibility: hidden;
 }
 
-/* Shading follows where a sticker currently points in world space, with a
-   fixed light above and in front. Recomputed after every turn, so the
-   shading stays correct while you drag the cube around. */
-.cube-type__px--up   { background:#151515; }
-.cube-type__px--fb   { background:#000;    }   /* front / back */
-.cube-type__px--side { background:#0a0a0a; }   /* left / right */
-.cube-type__px--down { background:#050505; }
+/* Which class a sticker carries follows where it currently points in world
+   space; the JS recomputes it after every turn, so shading stays correct while
+   you drag the cube around. */
+.cube-type__px--up   { background:var(--ct-off-up); }
+.cube-type__px--fb   { background:var(--ct-off-fb); }     /* front / back */
+.cube-type__px--side { background:var(--ct-off-side); }   /* left / right */
+.cube-type__px--down { background:var(--ct-off-down); }
 
 .cube-type__px--lit{ border-color:var(--ct-edge-lit); }
-.cube-type__px--lit.cube-type__px--up   { background:#ffffff; }
-.cube-type__px--lit.cube-type__px--fb   { background:#f4f4f4; }
-.cube-type__px--lit.cube-type__px--side { background:#cfcfcf; }
-.cube-type__px--lit.cube-type__px--down { background:#a8a8a8; }
+.cube-type__px--lit.cube-type__px--up   { background:var(--ct-on-up); }
+.cube-type__px--lit.cube-type__px--fb   { background:var(--ct-on-fb); }
+.cube-type__px--lit.cube-type__px--side { background:var(--ct-on-side); }
+.cube-type__px--lit.cube-type__px--down { background:var(--ct-on-down); }
 
 .cube-type__label{
   font-size:11px; letter-spacing:.34em; text-transform:uppercase;
-  color:rgba(255,255,255,.28); user-select:none; white-space:nowrap;
+  color:color-mix(in srgb, var(--ct-ink) 28%, transparent);
+  user-select:none; white-space:nowrap;
 }
-.cube-type__label b{ color:rgba(255,255,255,.92); font-weight:500; }
-.cube-type__label i{ font-style:normal; letter-spacing:.16em; color:rgba(255,255,255,.22); }
+.cube-type__label b{ color:color-mix(in srgb, var(--ct-ink) 92%, transparent); font-weight:500; }
+.cube-type__label i{ font-style:normal; letter-spacing:.16em; color:color-mix(in srgb, var(--ct-ink) 22%, transparent); }
 
 /* Label and reset sit in their own tight group so the block's large gap
    does not push them apart. */
@@ -103,7 +136,7 @@
   background:none; border:0; padding:2px 6px;
   font:10px/1 "Helvetica Neue",Helvetica,Arial,sans-serif;
   letter-spacing:.3em; text-transform:uppercase;
-  color:rgba(255,255,255,.2); cursor:pointer;
+  color:color-mix(in srgb, var(--ct-ink) 20%, transparent); cursor:pointer;
 }
 .cube-type__reset:hover,
-.cube-type__reset:focus-visible{ color:rgba(255,255,255,.62); outline:none; }
+.cube-type__reset:focus-visible{ color:color-mix(in srgb, var(--ct-ink) 62%, transparent); outline:none; }
