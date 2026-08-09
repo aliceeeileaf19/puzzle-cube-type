@@ -330,14 +330,20 @@
     return cur;
   }
 
-  /* ── Solver: shortest of RESTARTS attempts ─────────────────────────────
+  /* ── Solver: shortest of N attempts ────────────────────────────────────
      Provable minimality is out of reach on a 7x7 — the state space is
      astronomical and this is a pattern-reachability problem, not a solve. This
      is simply the shortest sequence found. Returns null only if every attempt
-     fails, which was never observed. */
-  function solve(state, target){
+     fails, which was never observed.
+
+     `restarts` trades move count against how long the main thread is blocked:
+     10 costs up to ~320 ms, 4 costs ~100 ms and a few more moves. Embedded on a
+     smooth-scrolling page, the shorter block is usually worth it — hence the
+     data-restarts attribute. */
+  function solve(state, target, restarts){
     let best = null;
-    for (let r = 0; r < RESTARTS; r++) {
+    const tries = restarts || RESTARTS;
+    for (let r = 0; r < tries; r++) {
       let s = solveAttempt(state, target, PLATEAU);
       if (!s) continue;
       s = cancel(s);
@@ -410,7 +416,8 @@
     /* i starts on the last letter so the first transition targets word[0].
        Until `started`, nothing is highlighted: the front face is still a
        solved single-colour face, not a glyph. */
-    const b = { word, scene, cube, turn, cubelets, label,
+    const restarts = Math.max(1, parseInt(host && host.dataset.restarts, 10) || RESTARTS);
+    const b = { word, scene, cube, turn, cubelets, label, restarts,
                 i: word.length - 1, started: false,
                 steps: 0, timers: [], idle: true, visible: true,
                 rx: -15, ry: -19 };
@@ -517,13 +524,13 @@
     clearTimers(b);
 
     const target = bitsOf(b.word[(b.i + 1) % b.word.length]);
-    let seq = solve(stateOf(b), target);
+    let seq = solve(stateOf(b), target, b.restarts);
 
     if (seq && seq.length < MIN_MOVES) {
       const pad = [];
       for (let k = seq.length; k < MIN_MOVES; k++) pad.push(pick(SAFE_MOVES));
       const padded = cloneState(stateOf(b)); simSeq(padded, pad);
-      const rest = solve(padded, target);
+      const rest = solve(padded, target, b.restarts);
       if (rest) seq = [...pad, ...rest];
     }
     if (!seq) { b.idle = true; return; }

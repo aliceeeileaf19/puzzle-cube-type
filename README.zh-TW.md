@@ -192,6 +192,10 @@ Mosaic 工具是把**一整片方塊陣列**排好，從正面看去近似一張
 | `data-word="…"`      | `__block`     | 要循環的字母             |
 | `data-labels="off"`  | `.cube-type`  | 隱藏文字與步數那一行     |
 | `data-reset="off"`   | `.cube-type`  | 隱藏 Reset 鈕            |
+| `data-restarts="4"`  | `.cube-type`  | 解算嘗試次數（預設 10）   |
+
+次數少代表每個字母阻塞主執行緒的時間短，代價是步數多幾步——嵌進有平滑捲動的頁面時值得。
+數字見「把步數壓短」那節。
 
 互動：**拖曳**旋轉、**點一下**跳下一個字母、**Reset** 回到還原狀態。`Space`（暫停）
 與 `R`（還原）只在 `<body class="cube-standalone">` 時綁定，所以嵌進別的頁面時不會

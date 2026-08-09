@@ -226,6 +226,11 @@ ignored.
 | `data-word="…"`      | `__block`     | the letters to cycle          |
 | `data-labels="off"`  | `.cube-type`  | hide the word/move-count line |
 | `data-reset="off"`   | `.cube-type`  | hide the reset button         |
+| `data-restarts="4"`  | `.cube-type`  | solver attempts (default 10)  |
+
+Fewer restarts means a shorter main-thread block per letter at the cost of a few
+more moves — worth it when the cube is embedded in a smooth-scrolling page. See
+*Making the solution shorter* for the numbers.
 
 Interaction: **drag** to orbit, **click** for the next letter, **reset** to
 return to a solved cube. `Space` (pause) and `R` (reset) are bound only when
