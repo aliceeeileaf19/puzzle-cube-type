@@ -39,10 +39,11 @@ constraint is that nothing is repainted:
 | How the target is formed | a solved sequence of legal layer turns     | usually by setting colours      |
 | Verifiable claim         | light-sticker count is invariant           | —                               |
 
-That last row is the whole point. Open the console on the demo: the number of
-light stickers is 147 at every instant, from the first turn to the last. A
-permutation cannot create or destroy a sticker, so a constant count is proof
-that the letters are being *moved* into place, not painted.
+The light-sticker count remains 147, which is a useful invariant but is **not
+proof by itself**: repainting two stickers could preserve the count. The stronger
+check tracks each sticker's identity and colour, independently replays every
+legal quarter turn, and verifies the resulting front-face bitmap. Browser tests
+also verify the original DOM stickers retain their colours through an animation.
 
 ---
 
@@ -173,27 +174,38 @@ most 7 of the 49 cells, so at least ⌈distance/7⌉ moves are needed — sits a
 
 ## Verification
 
-Everything below is reproducible from `window.CubeType` in the demo.
+Run the shipped checks locally:
 
-| check                                                          | result                    |
-| -------------------------------------------------------------- | ------------------------- |
-| 26 letters from 3 different states, front face equal cell for cell | 78 / 78, 0 failures   |
-| 102 arbitrary 49-bit targets, density 0.2–0.8                   | 0 failures                |
-| Move count over those targets                                   | mean 39.5, median 40, max 50 |
-| Degenerate targets (all-light, all-dark) from 3 states          | 0 failures                |
-| 140 animated transitions, model vs. target                     | 0 mismatches              |
-| DOM transforms vs. internal model                              | Hamming distance 0        |
-| Light-sticker count, at all times                              | 147, invariant            |
+```sh
+npm ci
+npm test
+npx playwright install chromium --only-shell
+npm run test:browser
+```
 
-So: with three light faces and three dark, **any 7×7 black-and-white bitmap
-appears to be reachable on one face using legal turns alone.** The per-orbit
-counting above shows why there is no shortage of either colour; the cases above
-are empirical evidence rather than a proof of reachability.
+The component still has no runtime dependencies or build step. Node.js 22+,
+Python 3 (test server), and Playwright are development/test tools only.
+GitHub Actions runs `npm run test:all` on pushes and pull requests.
 
+| Reproducible check | Coverage |
+|---|---|
+| Every shipped glyph from a solved cube | 50 targets |
+| A–Z sequentially from a fixed scrambled state | 26 targets |
+| Seeded sparse/dense random bitmaps | 10 targets |
+| All-dark and all-light bitmaps | 2 targets |
+| Legal move replay | Independent sticker-coordinate model, 294 unique sticker slots and fixed identities/colours |
+| Actual browser animation | Front face reaches A; DOM colours, sticker count and orientation matrices agree |
+| Interaction | Orbit, reset and no automatic start with reduced motion |
 
-The component also self-checks at runtime. After every letter it compares the
-front face against the target and `console.warn`s if a single cell is off. It
-has never fired.
+The model suite uses a fixed random seed so failures can be reproduced. This is
+empirical coverage, **not a proof that every 49-bit bitmap is reachable** or that
+a solution is shortest. Earlier timing/move-count tables above are historical
+measurements, not performance guarantees enforced by CI.
+
+The component also compares its front face against the target after each letter
+and reports a warning on a mismatch. The browser test treats such a warning as a
+failure.
+
 
 ---
 

@@ -1,0 +1,11 @@
+{
+  "name": "puzzle-cube-type",
+  "version": "0.4.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/model.test.mjs",
+    "test:browser": "playwright test",
+    "test:all": "npm test && npm run test:browser"
+  },
+  "devDependencies": { "@playwright/test": "1.64.1" }
+}
