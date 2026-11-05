@@ -20,8 +20,12 @@ test('manual letter transition preserves every DOM sticker, reaches A, supports 
       unchanged: window.stickerSnapshot.every(({el,lit}) => el.isConnected && el.classList.contains('cube-type__px--lit') === lit),
       count: b.cube.querySelectorAll('.cube-type__px').length,
       transforms: b.cubelets.every(c => {
-        const m = new DOMMatrix(getComputedStyle(c.el).transform);
-        return [[m.m11,m.m21,m.m31],[m.m12,m.m22,m.m32],[m.m13,m.m23,m.m33]].every((row,i) => row.every((v,j) => Math.abs(v-c.orient[i][j]) < .001));
+        const style = getComputedStyle(c.el);
+        const m = new DOMMatrix(style.transform);
+        const spacing = parseFloat(style.width);
+        const placed = Number.isFinite(spacing) && spacing > 0 &&
+          [m.m41,m.m42,m.m43].every((v,i) => Math.abs(v - c.pos[i] * spacing) < .1);
+        return placed && [[m.m11,m.m21,m.m31],[m.m12,m.m22,m.m32],[m.m13,m.m23,m.m33]].every((row,i) => row.every((v,j) => Math.abs(v-c.orient[i][j]) < .001));
       }),
     };
   });
